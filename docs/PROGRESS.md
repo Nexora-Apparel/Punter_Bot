@@ -217,3 +217,27 @@ Create the minimal application skeleton and test configuration only after select
 2. Verify the PUNTER-AI Neon project ID, default branch, database, role, compute settings, and Free entitlement.
 3. Add `DATABASE_URL` as an encrypted server-side secret only after the PUNTER Vercel project exists and private authentication is ready.
 4. Continue Stage 3 ingestion/data-integrity implementation independently of live database provisioning.
+
+
+## 2026-11-22 — Stage 3 ingestion architecture specified
+
+### Deliverable
+- Added `docs/INGESTION_PIPELINE.md` covering provider-neutral ingestion, immutable provenance, source-scoped idempotency, canonical identity resolution, deterministic fixture deduplication, result conflict policy, bounded transactions/retries, quarantine, freshness/quality dimensions, observability, and implementation sequence.
+- Explicitly prohibits fuzzy auto-merges, settlement from unknown statuses, silent result correction, and quarantined data entering training or prediction calculations.
+- This is an architecture specification; the ingestion runtime and database-backed orchestration are not yet implemented.
+
+### Repository state
+- Neon investigation recorded in this progress log at commit `168470976523f8e3444013ad3327e132e6b4c4bf`.
+- Ingestion specification committed at `f235d9fddd2403c8d69f490a5895237b1c5812c3`.
+- Working branch remains `foundation/application-skeleton`; PR #1 remains draft and unmerged.
+
+### Current blockers / verification
+- Dedicated PUNTER-AI Neon resource still requires the Vercel Marketplace resource-provisioning flow; current connected tools expose inspection but not resource creation. Direct Neon creation remains restricted because the organization is Vercel-managed.
+- CI/build/test execution remains unverified. Do not merge or deploy.
+- No live database, provider key, imported match data, or prediction publication exists.
+
+### Next implementation
+1. Implement typed ingestion DTOs and pure validators/identity helpers with unit tests.
+2. Implement idempotency and quarantine persistence behind repository interfaces.
+3. Reconcile the Drizzle schema against the ingestion specification before applying any migration.
+4. Resume Neon setup after the dedicated Free resource is provisioned through Vercel.
