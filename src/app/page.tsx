@@ -50,7 +50,7 @@ export default function HomePage() {
 
       <footer>
         <span>PUNTER AI · PRIVATE INSTANCE</span>
-        <span>Data by football-charts.com is not configured. Provider attribution will be shown when applicable.</span>
+        <span>Provider integrations are not connected. Source attribution will be shown when required.</span>
       </footer>
     </main>
   );
