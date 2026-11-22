@@ -48,6 +48,7 @@ Set `DATABASE_URL` only in local environment configuration or deployment secrets
 
 - [Progress log](docs/PROGRESS.md)
 - [Architecture foundation](docs/ARCHITECTURE.md)
+- [Provider acceptance checklist](docs/PROVIDER_ACCEPTANCE.md)
 
 ## Current status
 
