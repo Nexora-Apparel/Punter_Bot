@@ -46,6 +46,7 @@ function validateWindow(fromUtc: string, toUtc: string): { start: number; end: n
 }
 
 export class FiveDollarFootballProvider implements FootballDataProvider {
+  private lastNotices: string[] = [];
   readonly code = "five_dollar_football_api";
   readonly displayName = "5DollarFootballAPI";
   private readonly client: FiveDollarClient;
@@ -59,12 +60,17 @@ export class FiveDollarFootballProvider implements FootballDataProvider {
     return result.data;
   }
 
+  getLastNotices(): string[] {
+    return [...this.lastNotices];
+  }
+
   async listLeagues(countryCode?: string): Promise<FiveDollarLeague[]> {
     const result = await this.client.getAllPages<FiveDollarLeague>("leagues", {
       country: countryCode,
       include: "seasons",
       per_page: 100
     });
+    this.lastNotices = result.notices.map((notice) => notice.message ?? notice.code ?? "Provider notice");
     return result.records;
   }
 
@@ -85,8 +91,8 @@ export class FiveDollarFootballProvider implements FootballDataProvider {
 
   async fetchFixtures(fromUtc: string, toUtc: string): Promise<ProviderPage<ProviderFixture>> {
     const window = validateWindow(fromUtc, toUtc);
-    const [leagueRecords, fixtureRecords] = await Promise.all([
-      this.listLeagues(),
+    const [leagueResult, fixtureRecords] = await Promise.all([
+      this.client.getAllPages<FiveDollarLeague>("leagues", { include: "seasons", per_page: 100 }),
       this.client.getAllPages<FiveDollarFixture>("fixtures", {
         start_time: window.start,
         end_time: window.end,
@@ -95,12 +101,48 @@ export class FiveDollarFootballProvider implements FootballDataProvider {
       })
     ]);
 
-    const metadata = this.buildLeagueMetadata(leagueRecords);
+    this.lastNotices = [...leagueResult.notices, ...fixtureRecords.notices]
+      .map((notice) => notice.message ?? notice.code ?? "Provider notice");
+    const metadata = this.buildLeagueMetadata(leagueResult.records);
     const records = fixtureRecords.records.map((fixture) =>
       mapFiveDollarFixture(fixture, metadata.get(String(fixture.league?.id)) ?? {})
     );
 
     return { records, nextCursor: undefined };
+  }
+
+  async fetchLeagueFixtures(
+    leagueId: number,
+    options: { season?: string; status?: "all" | "scheduled" | "live" | "finished" | "unknown" } = {}
+  ): Promise<ProviderPage<ProviderFixture>> {
+    if (!Number.isSafeInteger(leagueId) || leagueId <= 0) {
+      throw new RangeError("leagueId must be a positive integer");
+    }
+    const leagueRecords = await this.listLeagues();
+    const league = leagueRecords.find((record) => record.id === leagueId);
+    if (!league) {
+      throw new Error(`League ${leagueId} is not present in the current account's accessible league catalogue`);
+    }
+
+    const result = await this.client.getAllPages<FiveDollarFixture>(`leagues/${leagueId}/fixtures`, {
+      season: options.season,
+      status: options.status ?? "all",
+      order: "asc",
+      per_page: 100
+    });
+    this.lastNotices = result.notices.map((notice) => notice.message ?? notice.code ?? "Provider notice");
+    const metadata = this.buildLeagueMetadata([league]);
+    if (options.season) metadata.set(String(leagueId), {
+      countryCode: league.country?.code,
+      currentSeason: options.season
+    });
+
+    return {
+      records: result.records.map((fixture) =>
+        mapFiveDollarFixture(fixture, metadata.get(String(fixture.league?.id)) ?? {})
+      ),
+      nextCursor: undefined
+    };
   }
 
   async fetchResults(fromUtc: string, toUtc: string): Promise<ProviderPage<ProviderResult>> {
