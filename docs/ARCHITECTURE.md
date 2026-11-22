@@ -185,3 +185,21 @@ This document is a design baseline, not evidence of a working system. Provider a
 - GitHub file writes succeeded, but the local environment could not resolve `github.com`; dependency installation and local build/test execution were therefore not possible in this session.
 - CI must pass before the scaffold is considered build-verified.
 - The probability functions are mathematical primitives only. They are not a trained, calibrated, validated match prediction model and must not be published as forecasts.
+
+
+## 11. 5DollarFootballAPI integration baseline
+
+Community Access is the selected $0 target plan. The current provider documentation states: top five European leagues plus one selected country's top flight and, where priced, second division; Bet365 markets; 12 months of results/odds history; 300 requests/hour with a 20 requests/minute ceiling; annual renewal; no payment card. Private/internal use does not require attribution, while public display requires a linked credit. Raw feed resale/redistribution is prohibited.
+
+The adapter uses:
+- `GET /status` to confirm the actual plan and usage.
+- `GET /leagues?include=seasons` to discover the competitions actually available to the key.
+- `GET /leagues?country=NG&include=seasons` to verify Nigeria coverage.
+- `GET /fixtures` for date windows of no more than 24 hours.
+- `GET /leagues/{id}/fixtures` for historical league fixtures and season-based retrieval.
+
+The adapter handles Bearer authentication, pagination, UTC normalization, provider error codes, 429 retry metadata, rate-limit headers, and provider fixture/result mapping. It does not embed credentials.
+
+**Nigeria coverage remains unverified.** The Community plan page says a chosen country pack includes its top flight and, where priced, second division, but the provider's data-quality page labels Nigeria Premier League as Pro. PUNTER AI must verify the actual Community account response before treating Nigerian competitions as accessible. See `docs/PROVIDER_ACCEPTANCE.md`.
+
+The provider adapter is not yet connected to a key. No live API request, competition audit, or production ingestion has been performed.
