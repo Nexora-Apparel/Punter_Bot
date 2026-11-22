@@ -32,11 +32,24 @@ Private, personal-use football analytics and prediction platform.
 
 Markets and publication rules may be expanded only with documented validation.
 
+## Development
+
+Requirements: Node.js 22 and npm.
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+Set `DATABASE_URL` only in local environment configuration or deployment secrets. Apply versioned SQL migrations with `npm run db:migrate`. Run quality checks with `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build`.
+
 ## Documentation
 
 - [Progress log](docs/PROGRESS.md)
 - [Architecture foundation](docs/ARCHITECTURE.md)
+- [Provider acceptance checklist](docs/PROVIDER_ACCEPTANCE.md)
 
 ## Current status
 
-Foundation and repository documentation are being established. Provider access, exact competition coverage, and historical data availability are not yet verified. No live predictions are being generated.
+The initial Next.js/TypeScript application and database/model scaffolding are on the working branch. CI, database provisioning, provider access, exact competition coverage, and historical data availability are not yet verified. No live predictions are being generated.

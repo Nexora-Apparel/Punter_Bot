@@ -1,6 +1,6 @@
 # PUNTER AI — Architecture Foundation
 
-**Status:** Initial architecture proposal; implementation has not started.
+**Status:** Initial application scaffold committed on `foundation/application-skeleton`; runtime, database, and CI verification are pending.
 
 ## 1. System boundaries
 
@@ -147,3 +147,59 @@ Predictions are immutable after publication. Corrections are represented by expl
 ## 9. Explicitly unverified
 
 This document is a design baseline, not evidence of a working system. Provider access, source coverage, database provisioning, deployment, scheduled jobs, and prediction quality remain unverified until tested and logged in `docs/PROGRESS.md`.
+
+
+## 10. Stage 2 implementation decisions
+
+### Application runtime
+- Next.js 16.4 with React 19.3 and TypeScript on Node.js 22.
+- Keep the initial application, API routes, ingestion orchestration, and independent probability engine in one TypeScript codebase.
+- Use a separate domain module for prediction calculations. It must not import UI, database, or provider-specific modules.
+- This replaces the earlier tentative Python-engine proposal. A second always-on runtime would add deployment and operations complexity without improving the initial Poisson/scoreline calculations. The single-runtime design is better aligned with the strict $0 requirement.
+- PostgreSQL access uses Drizzle ORM and the `postgres` driver.
+- SQL migrations are versioned in `drizzle/` and applied transactionally by `scripts/migrate.mjs`.
+
+### Hosting candidates and verified plan constraints
+- **Vercel Hobby** is a $0 deployment candidate for this private, personal, non-commercial application. Vercel describes Hobby as intended for personal use and restricts it to non-commercial use. It includes a free monthly resource allowance; excess usage is not an automatic paid overage on Hobby. See [Vercel Hobby plan](https://vercel.com/docs/plans/hobby) and [Vercel limits](https://vercel.com/docs/limits).
+- **Neon Free** is the PostgreSQL candidate. The installed Vercel Neon integration reports the Free plan, no payment method required, 1 GB storage per project, up to 100 projects, and 100 compute-unit hours per project. Neon documents 5 GB public network transfer per project and scale-to-zero after inactivity. See [Neon Free plan limits](https://github.com/neondatabase/website/blob/main/content/faqs/free-plan-limits-and-quotas.md).
+- These are free-plan constraints, not a promise of unlimited uptime or capacity. The system must handle database suspension, cold starts, quota exhaustion, and backups.
+- No custom domain purchase is required. Use the provider's free deployment hostname if deployment is approved.
+
+### Current provisioning status
+- A read-only Vercel account inspection found the Neon marketplace integration installed on the Free plan, with no payment method required and no PUNTER project provisioned.
+- Direct Neon project creation was rejected because the connected Neon organization is managed by Vercel. The database must be provisioned through the Vercel-managed Neon integration or an authorized dashboard flow. No database was created and no credentials were generated.
+- The Vercel team's current billing entitlement has not yet been verified; do not create a deployment project until its $0 status is confirmed.
+- Repository search currently reports the GitHub repository as public. Keep all credentials and personal/private match data out of Git. Do not expose an application deployment until authentication and access controls exist.
+
+### Scaffolded implementation
+- Next.js app shell and responsive dashboard placeholder.
+- `/api/health` endpoint that reports database configuration/connectivity without exposing credentials.
+- Drizzle PostgreSQL schema for sources, competitions, aliases, teams, fixtures, source records, provenance links, results, ingestion runs, model versions, predictions, settlements, and imports.
+- Initial SQL migration and transactional migration runner.
+- Provider-neutral fixture/result contracts.
+- Poisson scoreline matrix and derived 1X2, BTTS, and totals probabilities.
+- Unit tests for zero-rate behavior, invalid inputs, normalized scoreline matrices, and complementary market probabilities.
+- GitHub Actions workflow for lint, typecheck, unit tests, and production build.
+
+### Verification boundary
+- GitHub file writes succeeded, but the local environment could not resolve `github.com`; dependency installation and local build/test execution were therefore not possible in this session.
+- CI must pass before the scaffold is considered build-verified.
+- The probability functions are mathematical primitives only. They are not a trained, calibrated, validated match prediction model and must not be published as forecasts.
+
+
+## 11. 5DollarFootballAPI integration baseline
+
+Community Access is the selected $0 target plan. The current provider documentation states: top five European leagues plus one selected country's top flight and, where priced, second division; Bet365 markets; 12 months of results/odds history; 300 requests/hour with a 20 requests/minute ceiling; annual renewal; no payment card. Private/internal use does not require attribution, while public display requires a linked credit. Raw feed resale/redistribution is prohibited.
+
+The adapter uses:
+- `GET /status` to confirm the actual plan and usage.
+- `GET /leagues?include=seasons` to discover the competitions actually available to the key.
+- `GET /leagues?country=NG&include=seasons` to verify Nigeria coverage.
+- `GET /fixtures` for date windows of no more than 24 hours.
+- `GET /leagues/{id}/fixtures` for historical league fixtures and season-based retrieval.
+
+The adapter handles Bearer authentication, pagination, UTC normalization, provider error codes, 429 retry metadata, rate-limit headers, and provider fixture/result mapping. It does not embed credentials.
+
+**Nigeria coverage remains unverified.** The Community plan page says a chosen country pack includes its top flight and, where priced, second division, but the provider's data-quality page labels Nigeria Premier League as Pro. PUNTER AI must verify the actual Community account response before treating Nigerian competitions as accessible. See `docs/PROVIDER_ACCEPTANCE.md`.
+
+The provider adapter is not yet connected to a key. No live API request, competition audit, or production ingestion has been performed.
