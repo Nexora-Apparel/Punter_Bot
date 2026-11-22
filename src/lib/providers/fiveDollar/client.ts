@@ -47,8 +47,8 @@ export class FiveDollarClient {
     if (!apiKey) throw new Error("FOOTBALL_API_KEY is not configured");
 
     this.apiKey = apiKey;
-    this.baseUrl = (options?.baseUrl ?? process.env.FOOTBALL_API_BASE_URL ?? DEFAULT_BASE_URL)
-      .replace(/\/+$/, "");
+    const configuredBaseUrl = options?.baseUrl ?? process.env.FOOTBALL_API_BASE_URL;
+    this.baseUrl = (configuredBaseUrl?.trim() || DEFAULT_BASE_URL).replace(/\/+$/, "");
   }
 
   async get<T>(path: string, params: Record<string, string | number | undefined> = {}): Promise<ApiResult<T>> {
