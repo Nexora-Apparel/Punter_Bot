@@ -46,3 +46,24 @@ This is the canonical, append-only project progress record. Update it after ever
 3. Establish the application/database structure and automated tests.
 4. Activate and test the free primary provider when credentials are available; store credentials only in deployment/repository secrets, never in source code or chat.
 5. Build source provenance, normalization, archive, and import validation before prediction generation.
+
+
+## 2026-11-22 — Architecture foundation committed
+
+### Files created
+- `docs/ARCHITECTURE.md` — system boundaries, $0 provider strategy, canonical data model, ingestion/reconciliation lifecycle, prediction model boundary, publication/evaluation gates, security, and delivery sequence.
+- `docs/PROGRESS.md` — canonical progress record and operating rule for future updates.
+- `README.md` — project identity, non-negotiable constraints, initial scope, and documentation index.
+
+### Commits
+- README: `01e0b841a1e82f4bb19739331715dbfcff41a870`
+- Progress log: `eb1315ff3ec92825235c0eb22e2ac961271f767a`
+- Architecture: `450eff9ca9936fd10ccaa176ab68f38924d8f384`
+
+### Verification
+- All three files were fetched back successfully from `main`.
+- Confirmed paths: `README.md`, `docs/PROGRESS.md`, `docs/ARCHITECTURE.md`.
+- This verifies repository documentation only. No application runtime, database, provider integration, or prediction code exists yet.
+
+### Next step
+Create the minimal application skeleton and test configuration only after selecting a deployment/runtime path that can remain within the $0 budget. In parallel, perform a provider contract and competition-coverage audit before implementing live ingestion.
