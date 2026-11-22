@@ -74,7 +74,7 @@ Create the minimal application skeleton and test configuration only after select
 ### Working branch
 - Branch: `foundation/application-skeleton` (created from `main`).
 - All Stage 2 implementation changes are isolated on this branch; `main` remains the documented baseline.
-- Latest documentation commit: `f91108e35811583ecbffe74e802e167c5b8d319a`.
+- Initial README/architecture documentation update: `f91108e35811583ecbffe74e802e167c5b8d319a`; later progress entries were committed separately.
 
 ### Stack decision
 - Next.js 16.4, React 19.3, TypeScript, Node.js 22.
@@ -128,7 +128,7 @@ Create the minimal application skeleton and test configuration only after select
 
 ### Pull request and CI checkpoint
 - Draft PR #1 opened: https://github.com/Nexora-Apparel/Punter_Bot/pull/1
-- PR head: `c8531ed088a3e4e531ccae284c9ee378976e9d0b`; base: `main`.
+- PR head at opening: `c8531ed088a3e4e531ccae284c9ee378976e9d0b`; base: `main`. The branch subsequently advanced with progress-log updates, and PR #1 tracks the updated branch automatically.
 - PR reports 23 changed files, 960 additions, 2 deletions.
 - Commit combined status returned no status checks, and the workflow-run lookup returned no runs. CI execution is therefore **not verified**; do not treat the PR as passing.
 - Key implementation files were fetched back from the working branch successfully, including package manifest, schema, SQL migration, migration runner, workflow, probability module/tests, architecture, progress log, and README.
