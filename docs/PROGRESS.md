@@ -142,3 +142,40 @@ Create the minimal application skeleton and test configuration only after select
 3. Apply `drizzle/0001_initial.sql` through `npm run db:migrate` and compare the resulting catalog with `src/lib/db/schema.ts`.
 4. Add private authentication and authorization before deployment.
 5. Verify the GitHub repository visibility decision before adding any sensitive operational information.
+
+
+## 2026-11-22 — 5DollarFootballAPI adapter scaffolded
+
+### Current official provider contract reviewed
+- Community Access is $0, requires no payment card, and is renewable every 12 months.
+- It includes the top five leagues plus one selected country's top flight and, where priced, second division.
+- It includes Bet365 markets, 12 months of results/odds history, 300 requests/hour and a 20 requests/minute ceiling.
+- The API uses `Authorization: Bearer`, UTC timestamps, paginated JSON, and `X-RateLimit-*` headers.
+- `GET /fixtures` is limited to a 24-hour window; `GET /leagues/{id}/fixtures` supports season/history queries.
+- `GET /status` exposes the actual plan and usage. The provider documents `finished` as the confirmed full-time state; `unknown` is not settlement-ready.
+- Private/internal use does not require provider attribution. Public-facing use on the $0 plan requires a linked attribution credit. Raw data cannot be resold or redistributed as a competing feed.
+
+### Implementation committed on the working branch
+- Authenticated API client with JSON envelope handling, pagination, rate-limit header capture, timeout, and 429 retry metadata.
+- Fixture/result mapper with UTC normalization and strict finished-score checks.
+- Provider adapter with account status, accessible league catalogue, Community country-pack verification, 24-hour fixture windows, and season-based league fixture retrieval.
+- Unit tests for provider mapping, malformed scores, authentication, and rate-limit error handling.
+- Added `docs/PROVIDER_ACCEPTANCE.md` with the live acceptance checklist and Nigeria coverage gate.
+
+### Critical coverage caveat
+- The provider's Community page says a chosen country pack includes its top flight and, where priced, second division.
+- The provider's separate data-quality page labels Nigeria Premier League as Pro.
+- This apparent discrepancy is unresolved. Do not claim Nigeria Premier League access until the activated Community key's `GET /leagues?country=NG` response proves it.
+- No provider key has been supplied to the application, no live request has been made, and no source data has been ingested.
+
+### Verification
+- GitHub accepted the adapter, mapper, tests, and provider acceptance document.
+- The provider code has not yet passed a real TypeScript build or CI run. CI lookups still return no workflow runs or commit statuses.
+- Local dependency installation remains blocked by DNS/network access in the execution environment.
+
+### Next steps
+1. Get an actual CI run for PR #1 and fix all failures.
+2. Activate Community Access and select Nigeria if it is available in the country selector; keep the key out of chat and store it only as a server-side secret.
+3. Run the provider acceptance checks for plan, country catalogue, league IDs, seasons, fixtures, results, and rate limits.
+4. Resolve the Neon provisioning blocker through the installed Vercel-managed Free integration.
+5. Add authenticated private access before any public deployment.
