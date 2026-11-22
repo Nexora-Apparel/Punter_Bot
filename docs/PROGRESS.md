@@ -187,3 +187,33 @@ Create the minimal application skeleton and test configuration only after select
 - Latest source/doc verification fetched the provider acceptance document successfully.
 - Latest commit status and PR-triggered workflow lookup still return no checks and no workflow runs. CI is not green; it is unverified.
 - No production deployment, database project, API credential, or live provider data has been created or connected.
+
+
+## 2026-11-22 — Dedicated Neon provisioning investigation
+
+### Live account state inspected
+- Vercel team: `Nexora Apparel` (`team_Lj9bVie6YVKgrQTBNNwj1ieu`), plan reported as `hobby`.
+- Installed Neon marketplace integration: `icfg_T37vl1wEgvFG6tdtOe4qRFvT`.
+- Integration billing plan: `Free`; no payment method required; advertised limits include 1 GB/project, up to 100 projects, and 100 CU-hours/project.
+- Neon organization: `org-muddy-sunset-38353006`, managed by Vercel, plan `free`.
+- Existing Neon projects observed: `veltrix-ai-analyst-db`, `VELTRIXFOOTBALL`, `neon-camel-mirror`, and `neon-cyclamen-house`. No project named PUNTER or PUNTER-AI exists.
+- Vercel project search found no PUNTER project. Existing project list confirms this is not an already-linked PUNTER resource.
+- Existing VELTRIX and other Neon resources were only inspected; none were modified.
+
+### Provisioning attempt and result
+- Direct `mcp__Neon__create_project` against the Vercel-managed Neon organization was rejected by Neon with `action restricted; reason: organization is managed by Vercel`.
+- The installed Vercel Neon integration configuration advertises `provisioning: true`, and its product metadata is available, but the connected Vercel toolset exposes no integration-resource creation/provisioning action.
+- No PUNTER database, role, branch, password, or connection string was created or exposed.
+- No paid plan was selected, no payment method was requested, and no Vercel deployment/project was created.
+
+### Decision / blocker
+- The dedicated database must be created through the Vercel Marketplace Neon resource-provisioning flow, not the direct Neon project API.
+- Current tool access can inspect the integration and product metadata but cannot invoke the resource-provisioning operation. This requires a one-time manual action in the Vercel dashboard.
+- Target resource settings: project `PUNTER-AI`, database `punter_ai`, branch `main`, PostgreSQL 18, Free plan, minimum/maximum compute 0.25 CU, scale-to-zero enabled. Do not connect it to any VELTRIX or Nexora application.
+- After resource creation, verify the new project appears in both the Vercel integration resource list and Neon project list, then add its pooled connection string to the PUNTER deployment as encrypted server-side `DATABASE_URL`. Never place the connection string in Git or chat.
+
+### Next steps
+1. Complete the Vercel dashboard Neon resource creation using the Free plan only.
+2. Verify the PUNTER-AI Neon project ID, default branch, database, role, compute settings, and Free entitlement.
+3. Add `DATABASE_URL` as an encrypted server-side secret only after the PUNTER Vercel project exists and private authentication is ready.
+4. Continue Stage 3 ingestion/data-integrity implementation independently of live database provisioning.
