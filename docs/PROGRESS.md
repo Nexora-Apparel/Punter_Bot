@@ -124,3 +124,21 @@ Create the minimal application skeleton and test configuration only after select
 4. Apply the initial SQL migration and verify every table/index against the Drizzle schema.
 5. Add authentication before any publicly reachable deployment.
 6. Implement and test the 5DollarFootballAPI adapter only after the free account and coverage are verified.
+
+
+### Pull request and CI checkpoint
+- Draft PR #1 opened: https://github.com/Nexora-Apparel/Punter_Bot/pull/1
+- PR head: `c8531ed088a3e4e531ccae284c9ee378976e9d0b`; base: `main`.
+- PR reports 23 changed files, 960 additions, 2 deletions.
+- Commit combined status returned no status checks, and the workflow-run lookup returned no runs. CI execution is therefore **not verified**; do not treat the PR as passing.
+- Key implementation files were fetched back from the working branch successfully, including package manifest, schema, SQL migration, migration runner, workflow, probability module/tests, architecture, progress log, and README.
+- The initial local clone attempt failed at DNS resolution for github.com, so npm dependencies could not be installed locally.
+- Neon marketplace inspection confirmed the Vercel-installed integration is on its Free plan with no payment method required; its integration product list currently has no PUNTER resource.
+- Direct Neon project creation remains blocked by the Vercel-managed organization restriction. No paid plan or resource was created.
+
+### Updated next steps
+1. Obtain a real CI run and fix any lint, type, test, or build failures.
+2. Provision the PUNTER database through the Vercel-managed Neon Free integration; verify that the resulting resource remains on Free.
+3. Apply `drizzle/0001_initial.sql` through `npm run db:migrate` and compare the resulting catalog with `src/lib/db/schema.ts`.
+4. Add private authentication and authorization before deployment.
+5. Verify the GitHub repository visibility decision before adding any sensitive operational information.
