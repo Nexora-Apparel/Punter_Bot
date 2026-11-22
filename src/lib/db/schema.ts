@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   boolean,
   check,
@@ -69,7 +70,7 @@ export const fixtures = pgTable("fixtures", {
   status: varchar("status", { length: 32 }).notNull().default("scheduled"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (table) => [
-  check("fixtures_distinct_teams_ck", `${table.homeTeamId.name} <> ${table.awayTeamId.name}`),
+  check("fixtures_distinct_teams_ck", sql`${table.homeTeamId} <> ${table.awayTeamId}`),
   uniqueIndex("fixtures_canonical_identity_uq").on(
     table.competitionId, table.season, table.homeTeamId, table.awayTeamId, table.kickoffAt
   ),
@@ -107,8 +108,8 @@ export const matchResults = pgTable("match_results", {
   confirmedAt: timestamp("confirmed_at", { withTimezone: true }).notNull(),
   sourceRecordId: uuid("source_record_id").references(() => sourceRecords.id)
 }, (table) => [
-  check("match_results_home_goals_nonnegative_ck", `${table.homeGoals.name} >= 0`),
-  check("match_results_away_goals_nonnegative_ck", `${table.awayGoals.name} >= 0`)
+  check("match_results_home_goals_nonnegative_ck", sql`${table.homeGoals} >= 0`),
+  check("match_results_away_goals_nonnegative_ck", sql`${table.awayGoals} >= 0`)
 ]);
 
 export const ingestionRuns = pgTable("ingestion_runs", {
