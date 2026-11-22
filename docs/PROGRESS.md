@@ -179,3 +179,11 @@ Create the minimal application skeleton and test configuration only after select
 3. Run the provider acceptance checks for plan, country catalogue, league IDs, seasons, fixtures, results, and rate limits.
 4. Resolve the Neon provisioning blocker through the installed Vercel-managed Free integration.
 5. Add authenticated private access before any public deployment.
+
+
+### Final Stage 2 checkpoint
+- Working branch compares as **45 commits ahead, 0 behind** `main`; no base-branch divergence was reported.
+- Draft PR #1 remains open and tracks the working branch.
+- Latest source/doc verification fetched the provider acceptance document successfully.
+- Latest commit status and PR-triggered workflow lookup still return no checks and no workflow runs. CI is not green; it is unverified.
+- No production deployment, database project, API credential, or live provider data has been created or connected.
