@@ -67,3 +67,60 @@ This is the canonical, append-only project progress record. Update it after ever
 
 ### Next step
 Create the minimal application skeleton and test configuration only after selecting a deployment/runtime path that can remain within the $0 budget. In parallel, perform a provider contract and competition-coverage audit before implementing live ingestion.
+
+
+## 2026-11-22 — Stage 2 application and data foundation scaffolded
+
+### Working branch
+- Branch: `foundation/application-skeleton` (created from `main`).
+- All Stage 2 implementation changes are isolated on this branch; `main` remains the documented baseline.
+- Latest documentation commit: `f91108e35811583ecbffe74e802e167c5b8d319a`.
+
+### Stack decision
+- Next.js 16.4, React 19.3, TypeScript, Node.js 22.
+- Drizzle ORM + PostgreSQL driver.
+- Keep the independent prediction calculations in a separate TypeScript domain module within the same runtime. This supersedes the earlier tentative Python-service idea to avoid an additional always-on service and keep deployment within the $0 constraint.
+- Vercel Hobby is a candidate only for private, personal, non-commercial use; verify the actual team entitlement before provisioning.
+- Neon Free is the database candidate. The installed Vercel Neon integration reports Free, no payment method required, 1 GB storage/project, up to 100 projects, and 100 compute-unit hours/project.
+
+### Files scaffolded
+- Next.js app shell, metadata, responsive dashboard placeholder, global styles.
+- `/api/health` endpoint with database configuration and connectivity reporting.
+- Drizzle schema for sources, competitions and aliases, teams and aliases, fixtures, source records, source-fixture links, match results, ingestion runs, model versions, predictions, prediction outcomes, and CSV imports.
+- Initial PostgreSQL SQL migration and transactional migration runner.
+- Provider-independent fixture/result contracts.
+- Poisson probability primitives, scoreline matrix, and derived 1X2, BTTS, Over/Under 1.5 and 2.5 probabilities.
+- Unit tests for mathematical invariants and invalid inputs.
+- GitHub Actions workflow for lint, typecheck, tests, and production build.
+- Updated README with development and migration commands.
+- Updated architecture document with hosting constraints and decisions.
+
+### External account inspection
+- Neon project search returned no project named PUNTER.
+- Neon Free marketplace integration is installed through the Vercel team and reports no payment method requirement.
+- Direct Neon project creation was blocked: the Neon organization is managed by Vercel. No project, database, role, or connection secret was created.
+- Vercel billing entitlement was not exposed by the read-only team inspection. No Vercel project was created and no deployment was triggered.
+- GitHub repository metadata reports public visibility. No secrets or private match records have been committed. Application deployment remains blocked until authentication and private access controls are implemented.
+
+### Verification and limitations
+- GitHub accepted all file writes on the working branch.
+- A local clone/dependency install attempt could not reach `github.com` because the execution environment could not resolve the host.
+- Therefore lint, TypeScript, unit tests, and production build have **not** been executed locally. The new CI workflow is intended to run these checks once the branch is opened as a pull request.
+- No database migration has been applied to a live database.
+- No provider has been connected or tested.
+- The Poisson code is a mathematical foundation only; it is not yet a trained, calibrated, backtested, or publishable prediction model.
+
+### Blockers
+1. **Database provisioning:** use the Vercel-managed Neon Free integration flow; direct Neon API provisioning is restricted for this account.
+2. **Deployment entitlement:** verify the Vercel team's plan is $0 before creating or deploying a project.
+3. **Repository visibility:** current repository is public. Keep secrets and private data out of Git; decide whether source visibility should be changed before adding sensitive operational configuration.
+4. **Provider access:** 5DollarFootballAPI free Community account activation and Nigerian competition coverage remain unverified.
+5. **Build validation:** CI has not yet reported a successful run.
+
+### Next steps
+1. Open a pull request from `foundation/application-skeleton` to `main` and inspect CI results.
+2. Fix every lint/type/test/build failure before merging.
+3. Provision a dedicated PUNTER AI Neon Free database through the Vercel-managed integration, without enabling any paid plan.
+4. Apply the initial SQL migration and verify every table/index against the Drizzle schema.
+5. Add authentication before any publicly reachable deployment.
+6. Implement and test the 5DollarFootballAPI adapter only after the free account and coverage are verified.
